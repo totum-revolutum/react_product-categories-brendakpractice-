@@ -1,10 +1,11 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
 import React from 'react';
+import classNames from 'classnames';
 import './App.scss';
 
-// import usersFromServer from './api/users';
-// import categoriesFromServer from './api/categories';
-// import productsFromServer from './api/products';
+import usersFromServer from './api/users';
+import categoriesFromServer from './api/categories';
+import productsFromServer from './api/products';
 
 // const products = productsFromServer.map((product) => {
 //   const category = null; // find by product.categoryId
@@ -13,7 +14,25 @@ import './App.scss';
 //   return null;
 // });
 
-export const App = () => (
+function getUserById(ownerId) {
+  return usersFromServer.filter(user => user.id === ownerId);
+}
+
+function getCategoryById(categoryId) {
+  return categoriesFromServer.filter(category => category.id === categoryId);
+}
+
+const products = productsFromServer.map(product => ({
+  ...product,
+  user: getUserById(product.ownerId),
+  category: getCategoryById(product.categoryId),
+}));
+
+export const App = () => {
+  // eslint-disable-next-line no-unused-vars, no-undef
+  const [productsWithDetails, setProductsWithDetails] = useState(products);
+
+  // eslint-disable-next-line no-unused-vars, no-undef
   <div className="section">
     <div className="container">
       <h1 className="title">Product Categories</h1>
@@ -24,20 +43,23 @@ export const App = () => (
 
           <p className="panel-tabs has-text-weight-bold">
             <a data-cy="FilterAllUsers" href="#/">
-              All all
+              All
             </a>
-
-            <a data-cy="FilterUser" href="#/">
-              User 1
-            </a>
-
-            <a data-cy="FilterUser" href="#/" className="is-active">
-              User 2
-            </a>
-
-            <a data-cy="FilterUser" href="#/">
-              User 3
-            </a>
+            <>
+              {usersFromServer.map(user => (
+                <a
+                  key={user.id}
+                  data-cy="FilterUser"
+                  href="#/"
+                  className={classNames({
+                    'is-active': user.id === productsWithDetails,
+                  })}
+                  onClick={() => productsWithDetails(user)}
+                >
+                  {user.name}
+                </a>
+              ))}
+            </>
           </p>
 
           <div className="panel-block">
@@ -210,5 +232,5 @@ export const App = () => (
         </table>
       </div>
     </div>
-  </div>
-);
+  </div>;
+};
