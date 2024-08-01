@@ -27,7 +27,7 @@ export const App = () => (
               data-cy="FilterAllUsers"
               href="#/"
             >
-              All
+              All all
             </a>
 
             <a
